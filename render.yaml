@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: rahat-stylenest
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: AdminSeed__Password
+        generateValue: true

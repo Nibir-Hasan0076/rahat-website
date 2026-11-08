@@ -1,0 +1,12 @@
+bin/
+obj/
+.vs/
+.git/
+.gitignore
+.dockerignore
+*.db
+*.db-shm
+*.db-wal
+.shots/
+wwwroot/uploads/
+README.md
