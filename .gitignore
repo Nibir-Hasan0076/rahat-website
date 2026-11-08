@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+
+# IDE state
+.vs/
+*.user
+*.suo
+
+# Local database (created and seeded on first run; contains order data)
+*.db
+*.db-shm
+*.db-wal
+
+# Uploaded images (runtime data, recreated through the admin panel)
+wwwroot/uploads/
+
+# Test artifacts
+.shots/

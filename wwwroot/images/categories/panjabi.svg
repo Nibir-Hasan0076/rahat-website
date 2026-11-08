@@ -1,0 +1,26 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#F2EDE4"/>
+      <stop offset="1" stop-color="#E7DECD"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAF6EE"/>
+      <stop offset="1" stop-color="#EFE7D9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <circle cx="652" cy="196" r="168" fill="#ffffff" opacity=".26"/>
+  <circle cx="132" cy="812" r="228" fill="#ffffff" opacity=".16"/>
+  <ellipse cx="400" cy="892" rx="248" ry="30" fill="#6f6658" opacity=".13"/>
+  <path d="M318 232 L400 200 L482 232 L548 274 L636 486 L556 532 L516 448 L520 842 L280 842 L284 448 L244 532 L164 486 L252 274 Z"
+        fill="url(#cloth)" stroke="#CFC2AC" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M330 236 L400 206 L470 236 L458 272 L400 244 L342 272 Z"
+        fill="#F8F4EB" stroke="#CFC2AC" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="389" y="256" width="22" height="566" rx="4" fill="#F8F4EB"/>
+  <circle cx="400" cy="306" r="5.5" fill="#A98D6A"/><circle cx="400" cy="386" r="5.5" fill="#A98D6A"/><circle cx="400" cy="466" r="5.5" fill="#A98D6A"/><circle cx="400" cy="546" r="5.5" fill="#A98D6A"/><circle cx="400" cy="626" r="5.5" fill="#A98D6A"/><circle cx="400" cy="706" r="5.5" fill="#A98D6A"/>
+  <path d="M330 642 q28 58 8 188" fill="none" stroke="#CFC2AC" stroke-width="2" opacity=".55"/>
+  <path d="M470 642 q-28 58 -8 188" fill="none" stroke="#CFC2AC" stroke-width="2" opacity=".55"/>
+  <path d="M284 448 l32 24" stroke="#CFC2AC" stroke-width="2" opacity=".5"/>
+  <path d="M516 448 l-32 24" stroke="#CFC2AC" stroke-width="2" opacity=".5"/>
+</svg>

@@ -1,0 +1,120 @@
+@model StyleNest.Models.Order
+@{
+    ViewData["Title"] = $"Order {Model.OrderNumber}";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">
+            <a asp-area="Admin" asp-controller="Orders" asp-action="Index">Orders</a>
+            <span>/</span><span>@Model.OrderNumber</span>
+        </div>
+        <h1>Order @Model.OrderNumber</h1>
+        <div class="order-meta">
+            <partial name="_StatusPill" model="Model.Status" />
+            <span class="cell-sub">Placed @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</span>
+            <span class="cell-sub">· @Model.PaymentMethod</span>
+        </div>
+    </div>
+    <div class="admin-topbar-actions">
+        <a class="btn-admin light" asp-area="Admin" asp-controller="Orders" asp-action="Index">← All orders</a>
+    </div>
+</div>
+
+<div class="order-grid">
+    <div>
+        <div class="form-card">
+            <h2>Items in this order</h2>
+            <div class="table-wrap">
+                <table class="table-clean">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th class="right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="cell-product">
+                                        <img class="thumb-sm" src="@(item.ImageUrl ?? "/images/placeholder-product.svg")" alt="@item.ProductName" />
+                                        <div class="cell-title">@item.ProductName</div>
+                                    </div>
+                                </td>
+                                <td class="num">@StoreSettings.Money(item.UnitPrice)</td>
+                                <td class="num">@item.Quantity</td>
+                                <td class="num right">@StoreSettings.Money(item.LineTotal)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-block mt-3" style="max-width:320px;margin-left:auto;">
+                <div class="row-line"><span class="label">Subtotal</span><span class="value">@StoreSettings.Money(Model.Subtotal)</span></div>
+                <div class="row-line"><span class="label">Delivery</span><span class="value">@(Model.ShippingFee == 0 ? "Free" : StoreSettings.Money(Model.ShippingFee))</span></div>
+                <div class="row-line total"><span>Total</span><span>@StoreSettings.Money(Model.Total)</span></div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <div class="form-card">
+                <h2>Order notes</h2>
+                <div class="order-note">@Model.Notes</div>
+            </div>
+        }
+    </div>
+
+    <div>
+        <div class="form-card">
+            <h2>Update status</h2>
+            <form method="post" asp-area="Admin" asp-controller="Orders" asp-action="UpdateStatus" class="status-form">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <select class="form-select" name="status" aria-label="Order status">
+                    @foreach (var status in Enum.GetValues<StyleNest.Models.OrderStatus>())
+                    {
+                        if (status == Model.Status)
+                        {
+                            <option value="@status" selected>@status</option>
+                        }
+                        else
+                        {
+                            <option value="@status">@status</option>
+                        }
+                    }
+                </select>
+                <button type="submit" class="btn-admin primary sm">Update</button>
+            </form>
+            <div class="form-hint mt-2">
+                Cancelling an order returns its reserved stock to the catalogue. Changing it back deducts stock again.
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>Customer</h2>
+            <div class="detail-block">
+                <div class="row-line"><span class="label">Name</span><span class="value">@Model.CustomerName</span></div>
+                <div class="row-line"><span class="label">Phone</span><span class="value"><a href="tel:@Model.Phone">@Model.Phone</a></span></div>
+                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                {
+                    <div class="row-line"><span class="label">Email</span><span class="value"><a href="mailto:@Model.Email">@Model.Email</a></span></div>
+                }
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>Delivery</h2>
+            <div class="detail-block">
+                <div class="row-line"><span class="label">Address</span><span class="value">@Model.Address</span></div>
+                <div class="row-line"><span class="label">Area</span><span class="value">@(string.IsNullOrWhiteSpace(Model.Area) ? "—" : Model.Area)</span></div>
+                <div class="row-line"><span class="label">City</span><span class="value">@Model.City</span></div>
+                <div class="row-line"><span class="label">Payment</span><span class="value">@Model.PaymentMethod</span></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img">
+  <rect width="800" height="1000" fill="#EFEAE1"/>
+  <rect x="36" y="36" width="728" height="928" rx="26" fill="none" stroke="#D8CFC0" stroke-width="3" stroke-dasharray="12 12"/>
+  <g opacity=".5">
+    <path d="M318 300 L400 266 L482 300 L552 346 L638 542 L556 588 L516 502 L520 760 L280 760 L284 502 L244 588 L162 542 L248 346 Z" fill="#DED5C6"/>
+    <path d="M318 300 L400 380 L482 300 L462 286 L400 336 L338 286 Z" fill="#CFC4B2"/>
+  </g>
+  <text x="400" y="836" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#A79B88">Product image</text>
+</svg>

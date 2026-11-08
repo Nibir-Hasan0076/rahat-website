@@ -1,0 +1,47 @@
+@model StyleNest.Models.ViewModels.CategoryFormViewModel
+@{
+    var isEdit = Model.Id != 0;
+}
+
+<form method="post" enctype="multipart/form-data" asp-area="Admin" asp-controller="Categories" asp-action="@(isEdit ? "Edit" : "Create")">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ExistingImageUrl" />
+
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+    <div class="form-grid">
+        <div>
+            <div class="form-card">
+                <h2>Category details</h2>
+                <div class="mb-3">
+                    <label class="admin-label" asp-for="Name">Category name <span class="req">*</span></label>
+                    <input class="form-control" asp-for="Name" placeholder="e.g. T-Shirts" autofocus />
+                    <span asp-validation-for="Name"></span>
+                    <div class="form-hint">This is the name shoppers see in the navigation and filters.</div>
+                </div>
+                <div>
+                    <label class="admin-label" asp-for="Description">Description</label>
+                    <textarea class="form-control" asp-for="Description" placeholder="A short line describing this collection…"></textarea>
+                    <span asp-validation-for="Description"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-admin primary">@(isEdit ? "Save changes" : "Create category")</button>
+                <a class="btn-admin light" asp-area="Admin" asp-controller="Categories" asp-action="Index">Cancel</a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>Category image</h2>
+            <div class="image-uploader">
+                <img id="categoryPreview" class="image-preview"
+                     src="@(Model.ExistingImageUrl ?? "/images/placeholder-category.svg")" alt="Category image preview" />
+                <input class="form-control" asp-for="ImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"
+                       data-preview="#categoryPreview" />
+                <div class="form-hint">JPG, PNG, WEBP or GIF · up to 5 MB. Portrait images look best.</div>
+                <span asp-validation-for="ImageFile"></span>
+            </div>
+        </div>
+    </div>
+</form>

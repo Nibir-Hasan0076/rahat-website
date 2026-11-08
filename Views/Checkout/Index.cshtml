@@ -1,0 +1,142 @@
+@model StyleNest.Models.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+    var itemCount = Model.Items.Sum(i => i.Quantity);
+}
+
+<div class="container">
+    <div class="steps">
+        <span class="step done"><span class="num">1</span> Bag</span>
+        <span class="step-sep"></span>
+        <span class="step active"><span class="num">2</span> Delivery details</span>
+        <span class="step-sep"></span>
+        <span class="step"><span class="num">3</span> Confirmation</span>
+    </div>
+
+    <form method="post" asp-area="" asp-controller="Checkout" asp-action="PlaceOrder" novalidate>
+        <div class="checkout-layout">
+            <div>
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="checkout-panel">
+                    <h2><span class="panel-num">1</span> Contact details</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" asp-for="FullName">Full name <span class="req">*</span></label>
+                            <input class="form-control" asp-for="FullName" placeholder="e.g. Ayesha Rahman" autocomplete="name" />
+                            <span asp-validation-for="FullName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" asp-for="Phone">Phone number <span class="req">*</span></label>
+                            <input class="form-control" asp-for="Phone" placeholder="01XXXXXXXXX" inputmode="tel" autocomplete="tel" />
+                            <span asp-validation-for="Phone"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" asp-for="Email">Email (optional)</label>
+                            <input class="form-control" asp-for="Email" placeholder="you@example.com" autocomplete="email" />
+                            <span asp-validation-for="Email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-panel">
+                    <h2><span class="panel-num">2</span> Delivery address</h2>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" asp-for="Address">Street address <span class="req">*</span></label>
+                            <input class="form-control" asp-for="Address" placeholder="House, road, block" autocomplete="street-address" />
+                            <span asp-validation-for="Address"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" asp-for="City">City / district <span class="req">*</span></label>
+                            <input class="form-control" asp-for="City" placeholder="e.g. Dhaka" autocomplete="address-level2" />
+                            <span asp-validation-for="City"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" asp-for="Area">Area (optional)</label>
+                            <input class="form-control" asp-for="Area" placeholder="e.g. Dhanmondi" autocomplete="address-level3" />
+                            <span asp-validation-for="Area"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" asp-for="Notes">Order notes (optional)</label>
+                            <textarea class="form-control" asp-for="Notes" placeholder="Delivery instructions, preferred time, etc."></textarea>
+                            <span asp-validation-for="Notes"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-panel">
+                    <h2><span class="panel-num">3</span> Payment method</h2>
+                    <div class="payment-options">
+                        @foreach (var method in StoreSettings.PaymentMethods)
+                        {
+                            var description = method switch
+                            {
+                                "Cash on Delivery" => "Pay in cash when your order arrives at your door.",
+                                "bKash" => "We'll send a payment request after confirming your order.",
+                                _ => "Our team will share a secure card payment link after confirmation."
+                            };
+                            <label class="pay-option">
+                                <input type="radio" asp-for="PaymentMethod" value="@method" />
+                                <div>
+                                    <strong>@method</strong>
+                                    <span>@description</span>
+                                </div>
+                            </label>
+                        }
+                    </div>
+                    <span asp-validation-for="PaymentMethod"></span>
+                </div>
+            </div>
+
+            <aside class="summary-card">
+                <h2>Your order</h2>
+                <div class="checkout-items">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="checkout-item">
+                            <img class="checkout-thumb" src="@(item.ImageUrl ?? "/images/placeholder-product.svg")" alt="@item.Name" />
+                            <div class="checkout-item-info">
+                                <strong>@item.Name</strong>
+                                <span>Qty @item.Quantity · @StoreSettings.Money(item.Price)</span>
+                            </div>
+                            <span class="checkout-item-total">@StoreSettings.Money(item.LineTotal)</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal (@itemCount @(itemCount == 1 ? "item" : "items"))</span>
+                    <strong>@StoreSettings.Money(Model.Subtotal)</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <strong>@(Model.ShippingFee == 0 ? "Free" : StoreSettings.Money(Model.ShippingFee))</strong>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span class="price">@StoreSettings.Money(Model.Total)</span>
+                </div>
+
+                <div class="cart-actions">
+                    <button type="submit" class="btn-accent">
+                        Place order · @StoreSettings.Money(Model.Total)
+                    </button>
+                </div>
+                <div class="secure-note">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                    Your details are only used to deliver this order.
+                </div>
+                <div class="text-center mt-3">
+                    <a class="link-underline" asp-area="" asp-controller="Cart" asp-action="Index">← Back to bag</a>
+                </div>
+            </aside>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

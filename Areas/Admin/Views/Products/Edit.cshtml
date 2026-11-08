@@ -1,0 +1,21 @@
+@model StyleNest.Models.ViewModels.ProductFormViewModel
+@{
+    ViewData["Title"] = "Edit product";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">
+            <a asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a>
+            <span>/</span><span>@Model.Name</span>
+        </div>
+        <h1>Edit product</h1>
+        <p>Update the details, pricing, stock or image for this piece.</p>
+    </div>
+</div>
+
+<partial name="_Form" model="Model" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

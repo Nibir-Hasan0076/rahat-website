@@ -1,0 +1,178 @@
+﻿@model StyleNest.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Everyday clothing, considered";
+    var tiles = Model.Categories.Take(2).ToList();
+}
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div>
+                <span class="eyebrow">New season · 2026</span>
+                <h1>Wardrobe staples, <em>thoughtfully made.</em></h1>
+                <p class="lead-copy">
+                    Panjabis, polos, shirts and pants cut from quality fabrics — designed for
+                    everyday comfort and the moments that matter.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn-ink" asp-area="" asp-controller="Shop" asp-action="Index">
+                        Shop the collection
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6"></path>
+                        </svg>
+                    </a>
+                    <a class="btn-outline-ink" href="#categories">Browse categories</a>
+                </div>
+                <div class="hero-proof">
+                    <div><strong>@Model.TotalProducts</strong> styles in store</div>
+                    <span class="dot"></span>
+                    <div><strong>৳60</strong> flat delivery</div>
+                    <span class="dot"></span>
+                    <div><strong>7 days</strong> easy exchange</div>
+                </div>
+            </div>
+
+            <div class="hero-collage">
+                <div class="hero-stamp">New season</div>
+                @if (tiles.Count >= 2)
+                {
+                    var first = tiles[0];
+                    var second = tiles[1];
+                    <a class="hero-tile" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@first.Id">
+                        <img src="@(first.ImageUrl ?? "/images/placeholder-category.svg")" alt="@first.Name" />
+                        <span class="hero-tile-label">@first.Name <span>@(Model.ProductCounts.GetValueOrDefault(first.Id)) pieces</span></span>
+                    </a>
+                    <a class="hero-tile" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@second.Id">
+                        <img src="@(second.ImageUrl ?? "/images/placeholder-category.svg")" alt="@second.Name" />
+                        <span class="hero-tile-label">@second.Name <span>@(Model.ProductCounts.GetValueOrDefault(second.Id)) pieces</span></span>
+                    </a>
+                }
+                else
+                {
+                    <div class="hero-tile">
+                        <img src="~/images/placeholder-category.svg" alt="StyleNest collection" />
+                    </div>
+                    <div class="hero-tile">
+                        <img src="~/images/placeholder-product.svg" alt="StyleNest collection" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="value-strip">
+        <div class="value-item">
+            <div class="value-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"></path>
+                    <circle cx="7" cy="18" r="1.6"></circle>
+                    <circle cx="17" cy="18" r="1.6"></circle>
+                </svg>
+            </div>
+            <div><strong>Free delivery</strong><span>On orders over ৳2,000</span></div>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 8.5a8 8 0 1 0 .5 5"></path>
+                    <path d="M20 4v5h-5"></path>
+                </svg>
+            </div>
+            <div><strong>Easy exchange</strong><span>7-day hassle-free returns</span></div>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                    <path d="M3 10h18M7 15h3"></path>
+                </svg>
+            </div>
+            <div><strong>Pay your way</strong><span>Cash on delivery &amp; bKash</span></div>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z"></path>
+                    <path d="m9 12 2 2 4-4"></path>
+                </svg>
+            </div>
+            <div><strong>Quality first</strong><span>Fabrics chosen to last</span></div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Categories.Count > 0)
+{
+    <section class="section" id="categories">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Find your fit</span>
+                    <h2>Shop by category</h2>
+                    <p>From festive panjabis to everyday polos — browse the pieces that make up a considered wardrobe.</p>
+                </div>
+                <a class="link-underline" asp-area="" asp-controller="Shop" asp-action="Index">View everything</a>
+            </div>
+            <div class="category-grid">
+                @foreach (var category in Model.Categories)
+                {
+                    <a class="category-card" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@category.Id">
+                        <img src="@(category.ImageUrl ?? "/images/placeholder-category.svg")" alt="@category.Name" loading="lazy" />
+                        <span class="arrow">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 17 17 7M8 7h9v9"></path>
+                            </svg>
+                        </span>
+                        <span class="category-card-overlay">
+                            <h3>@category.Name</h3>
+                            <span>@(Model.ProductCounts.GetValueOrDefault(category.Id)) products</span>
+                        </span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (Model.FeaturedProducts.Count > 0)
+{
+    <section class="section">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Selected for you</span>
+                    <h2>Pieces worth keeping</h2>
+                    <p>Our current favourites — versatile, comfortable and easy to style.</p>
+                </div>
+                <a class="link-underline" asp-area="" asp-controller="Shop" asp-action="Index">Shop all products</a>
+            </div>
+            <div class="product-grid">
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <partial name="_ProductCard" model="product" />
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="section">
+    <div class="container">
+        <div class="promo-band">
+            <div class="promo-copy">
+                <span class="eyebrow">The StyleNest standard</span>
+                <h2>Fabric first. Fit always.</h2>
+                <p>
+                    Every piece is chosen for how it feels, how it washes and how it wears over time.
+                    No noise, no fast-fashion shortcuts — just clothes you reach for again and again.
+                </p>
+                <a class="link-underline" asp-area="" asp-controller="Shop" asp-action="Index">Explore the collection</a>
+            </div>
+            <div class="promo-art">
+                <img src="~/images/categories/panjabi.svg" alt="Panjabi illustration" />
+            </div>
+        </div>
+    </div>
+</section>

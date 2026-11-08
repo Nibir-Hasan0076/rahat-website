@@ -1,0 +1,31 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#ECE6DC"/>
+      <stop offset="1" stop-color="#E1D9CB"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B9A486"/>
+      <stop offset="1" stop-color="#A78F6F"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <circle cx="652" cy="196" r="168" fill="#ffffff" opacity=".26"/>
+  <circle cx="132" cy="812" r="228" fill="#ffffff" opacity=".16"/>
+  <ellipse cx="400" cy="892" rx="248" ry="30" fill="#6f6658" opacity=".13"/>
+  <defs>
+    <pattern id="denim" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="3" height="8" fill="#ffffff" opacity=".06"/>
+    </pattern>
+  </defs>
+  <path d="M266 250 h268 v64 h-268 z" fill="#A68B68" stroke="#8A7152" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M266 314 L392 314 L376 816 L262 816 Z" fill="url(#cloth)" stroke="#8A7152" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M408 314 L534 314 L538 816 L424 816 Z" fill="url(#cloth)" stroke="#8A7152" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M392 314 Q400 382 408 314" fill="#A68B68" stroke="#8A7152" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="266" y="250" width="268" height="64" fill="url(#denim)"/>
+  <path d="M400 314 L400 392" stroke="#8A7152" stroke-width="2.5" opacity=".8"/>
+  <circle cx="400" cy="276" r="6" fill="#59452F"/>
+  <path d="M322 340 L314 806 M478 340 L486 806" stroke="#D6C3A6" stroke-width="2.5" opacity=".55" stroke-dasharray="10 7"/>
+  <path d="M292 292 h20 M488 292 h20" stroke="#8A7152" stroke-width="3" opacity=".7"/>
+  <ellipse cx="400" cy="884" rx="210" ry="24" fill="#6f6658" opacity=".12"/>
+</svg>

@@ -1,0 +1,145 @@
+@model StyleNest.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">Overview</div>
+        <h1>Dashboard</h1>
+        <p>Welcome back. Here's what's happening in the store.</p>
+    </div>
+    <div class="admin-topbar-actions">
+        <a class="btn-admin light" asp-area="" asp-controller="Home" asp-action="Index">View storefront</a>
+        <a class="btn-admin primary" asp-area="Admin" asp-controller="Products" asp-action="Create">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            Add product
+        </a>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <span class="stat-label">Revenue</span>
+        <div class="stat-value">@StoreSettings.Money(Model.Revenue)</div>
+        <div class="stat-note">Excluding cancelled orders</div>
+        <span class="stat-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 1.8 2.7 5 3.5 5 1.6 5 3.5-2.2 3-5 3-5-1.1-5-3"></path>
+            </svg>
+        </span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Orders</span>
+        <div class="stat-value">@Model.OrderCount</div>
+        <div class="stat-note">@Model.PendingOrderCount pending confirmation</div>
+        <span class="stat-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 8.5h12l1 12H5l1-12Z"></path><path d="M9 8.5V6a3 3 0 0 1 6 0v2.5"></path>
+            </svg>
+        </span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Products</span>
+        <div class="stat-value">@Model.ProductCount</div>
+        <div class="stat-note">Across @Model.CategoryCount categories</div>
+        <span class="stat-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"></path><path d="m4 7 8 4 8-4M12 11v10"></path>
+            </svg>
+        </span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Categories</span>
+        <div class="stat-value">@Model.CategoryCount</div>
+        <div class="stat-note">Collections live in the store</div>
+        <span class="stat-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect>
+            </svg>
+        </span>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="panel">
+        <div class="panel-head">
+            <h2 class="panel-title">Recent orders</h2>
+            <a asp-area="Admin" asp-controller="Orders" asp-action="Index">View all orders</a>
+        </div>
+        @if (Model.RecentOrders.Count == 0)
+        {
+            <div class="empty-admin">
+                <strong>No orders yet</strong>
+                Orders will appear here as soon as customers check out.
+            </div>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table class="table-clean">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="cell-title">@order.OrderNumber</a>
+                                    <div class="cell-sub">@order.CreatedAt.ToLocalTime().ToString("dd MMM, h:mm tt")</div>
+                                </td>
+                                <td>
+                                    <div class="cell-title">@order.CustomerName</div>
+                                    <div class="cell-sub">@order.Phone</div>
+                                </td>
+                                <td class="num">@StoreSettings.Money(order.Total)</td>
+                                <td><partial name="_StatusPill" model="order.Status" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <div class="panel-head">
+            <h2 class="panel-title">Low stock</h2>
+            <a asp-area="Admin" asp-controller="Products" asp-action="Index">Manage stock</a>
+        </div>
+        @if (Model.LowStockProducts.Count == 0)
+        {
+            <div class="empty-admin">
+                <strong>Stock looks healthy</strong>
+                No active products are running low right now.
+            </div>
+        }
+        else
+        {
+            <div class="panel-body" style="display:grid;gap:.9rem;">
+                @foreach (var product in Model.LowStockProducts)
+                {
+                    <div class="d-flex align-items-center gap-2">
+                        <img class="thumb-sm" src="@(product.ImageUrl ?? "/images/placeholder-product.svg")" alt="@product.Name" />
+                        <div style="flex:1;min-width:0;">
+                            <div class="cell-title">@product.Name</div>
+                            <div class="cell-sub">@product.Category?.Name</div>
+                        </div>
+                        <span class="badge-soft @(product.Stock == 0 ? "red" : "amber")">
+                            @(product.Stock == 0 ? "Out" : $"{product.Stock} left")
+                        </span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,85 @@
+@model StyleNest.Models.ViewModels.ShopViewModel
+@{
+    ViewData["Title"] = Model.SelectedCategoryName ?? (string.IsNullOrEmpty(Model.Query) ? "Shop all" : $"Search: {Model.Query}");
+    var heading = Model.SelectedCategoryName ?? (string.IsNullOrEmpty(Model.Query) ? "The full collection" : "Search results");
+}
+
+<section class="page-hero">
+    <div class="container">
+        <div class="breadcrumb-custom">
+            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            <span class="sep">/</span>
+            <a asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+            @if (!string.IsNullOrEmpty(Model.SelectedCategoryName))
+            {
+                <span class="sep">/</span>
+                <span>@Model.SelectedCategoryName</span>
+            }
+        </div>
+        <span class="eyebrow">StyleNest catalogue</span>
+        <h1>@heading</h1>
+        <p>
+            @if (!string.IsNullOrEmpty(Model.Query))
+            {
+                <text>Showing pieces matching &ldquo;@Model.Query&rdquo;.</text>
+            }
+            else if (!string.IsNullOrEmpty(Model.SelectedCategoryName))
+            {
+                <text>Every @Model.SelectedCategoryName.ToLower() in the collection, ready to wear.</text>
+            }
+            else
+            {
+                <text>Thoughtfully chosen clothing for everyday life — filter by category or search for a piece.</text>
+            }
+        </p>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <div class="chip-row">
+        <a class="chip @(Model.SelectedCategoryId is null ? "active" : "")"
+           asp-area="" asp-controller="Shop" asp-action="Index" asp-route-q="@Model.Query">All products</a>
+        @foreach (var category in Model.Categories)
+        {
+            <a class="chip @(Model.SelectedCategoryId == category.Id ? "active" : "")"
+               asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@category.Id" asp-route-q="@Model.Query">
+                @category.Name
+            </a>
+        }
+    </div>
+
+    <div class="shop-toolbar">
+        <span>@Model.Products.Count @(Model.Products.Count == 1 ? "product" : "products")</span>
+        @if (!string.IsNullOrEmpty(Model.Query))
+        {
+            <span class="search-pill">
+                Search: @Model.Query
+                <a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@Model.SelectedCategoryId" aria-label="Clear search">&times;</a>
+            </span>
+        }
+    </div>
+
+    @if (Model.Products.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-3.6-3.6"></path>
+                </svg>
+            </div>
+            <h2>Nothing here yet</h2>
+            <p>We couldn't find products for this filter. Try a different category or clear your search.</p>
+            <a class="btn-ink" asp-area="" asp-controller="Shop" asp-action="Index">Browse all products</a>
+        </div>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model.Products)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+    }
+</div>

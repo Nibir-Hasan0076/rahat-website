@@ -1,0 +1,119 @@
+@model StyleNest.Models.ViewModels.ProductDetailsViewModel
+@{
+    var product = Model.Product;
+    ViewData["Title"] = product.Name;
+    var gallery = Model.Gallery.Count > 0 ? Model.Gallery : new List<string> { "/images/placeholder-product.svg" };
+    var image = gallery[0];
+    var stockClass = product.Stock <= 0 ? "out" : product.Stock <= 5 ? "low" : "";
+    var stockText = product.Stock <= 0
+        ? "Sold out"
+        : product.Stock <= 5 ? $"Only {product.Stock} left in stock" : $"In stock — {product.Stock} available";
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<div class="container product-detail">
+    <div class="breadcrumb-custom">
+        <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <span class="sep">/</span>
+        <a asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+        <span class="sep">/</span>
+        <a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@product.CategoryId">@product.Category?.Name</a>
+        <span class="sep">/</span>
+        <span>@product.Name</span>
+    </div>
+
+    <div class="product-detail-grid">
+        <div class="detail-media">
+            <img id="productMainImage" src="@image" alt="@product.Name" />
+
+            @if (gallery.Count > 1)
+            {
+                <div class="detail-thumbs" data-gallery>
+                    @for (var i = 0; i < gallery.Count; i++)
+                    {
+                        <button type="button" class="detail-thumb @(i == 0 ? "active" : "")"
+                                data-gallery-src="@gallery[i]" aria-label="View image @(i + 1)">
+                            <img src="@gallery[i]" alt="" />
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="detail-copy">
+            <span class="eyebrow">@product.Category?.Name</span>
+            <h1>@product.Name</h1>
+            <div class="detail-price">@StoreSettings.Money(product.Price)</div>
+
+            <div class="stock-line">
+                <span class="stock-dot @stockClass"></span>
+                <span>@stockText</span>
+            </div>
+
+            <p class="detail-description">@product.Description</p>
+
+            @if (product.Stock > 0)
+            {
+                <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" class="buy-form"
+                      data-price-form data-unit-price="@product.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                    <input type="hidden" name="productId" value="@product.Id" />
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="qty-stepper" data-qty>
+                        <button type="button" data-step="-1" aria-label="Decrease quantity">−</button>
+                        <input type="number" name="quantity" value="1" min="1" max="@product.Stock" aria-label="Quantity" />
+                        <button type="button" data-step="1" aria-label="Increase quantity">+</button>
+                    </div>
+                    <button type="submit" class="btn-ink">
+                        Add to bag — <span data-price-total>@StoreSettings.Money(product.Price)</span>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <button class="btn-ink" disabled>Currently sold out</button>
+            }
+
+            <div class="detail-perks">
+                <div class="perk">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"></path><circle cx="7" cy="18" r="1.6"></circle><circle cx="17" cy="18" r="1.6"></circle>
+                    </svg>
+                    <div><strong>Delivery</strong> — ৳60 flat, free over ৳2,000. Usually 2–4 working days.</div>
+                </div>
+                <div class="perk">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 8.5a8 8 0 1 0 .5 5"></path><path d="M20 4v5h-5"></path>
+                    </svg>
+                    <div><strong>Easy exchange</strong> — unused pieces can be exchanged within 7 days.</div>
+                </div>
+                <div class="perk">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M3 10h18M7 15h3"></path>
+                    </svg>
+                    <div><strong>Payment</strong> — cash on delivery, bKash or card after confirmation.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.RelatedProducts.Count > 0)
+{
+    <section class="section mt-4">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">You may also like</span>
+                    <h2>More from @product.Category?.Name</h2>
+                </div>
+                <a class="link-underline" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@product.CategoryId">View category</a>
+            </div>
+            <div class="product-grid">
+                @foreach (var related in Model.RelatedProducts)
+                {
+                    <partial name="_ProductCard" model="related" />
+                }
+            </div>
+        </div>
+    </section>
+}

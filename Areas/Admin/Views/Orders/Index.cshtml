@@ -1,0 +1,83 @@
+@model StyleNest.Models.ViewModels.AdminOrdersViewModel
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">Sales</div>
+        <h1>Orders</h1>
+        <p>Track incoming orders and move them through fulfilment.</p>
+    </div>
+    @if (Model.PendingCount > 0)
+    {
+        <div class="admin-topbar-actions">
+            <span class="badge-soft amber">@Model.PendingCount pending confirmation</span>
+        </div>
+    }
+</div>
+
+<div class="panel">
+    <div class="chip-row-admin">
+        <a class="chip-admin @(Model.Status is null ? "active" : "")" asp-area="Admin" asp-controller="Orders" asp-action="Index">
+            All <span class="count">@Model.TotalCount</span>
+        </a>
+        @foreach (var status in Enum.GetValues<StyleNest.Models.OrderStatus>())
+        {
+            var count = Model.StatusCounts.GetValueOrDefault(status);
+            <a class="chip-admin @(Model.Status == status ? "active" : "")" asp-area="Admin" asp-controller="Orders" asp-action="Index" asp-route-status="@status">
+                @status <span class="count">@count</span>
+            </a>
+        }
+    </div>
+
+    @if (Model.Orders.Count == 0)
+    {
+        <div class="empty-admin">
+            <strong>No orders here</strong>
+            @(Model.Status is null ? "New customer orders will show up in this list." : $"There are no {Model.Status} orders right now.")
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Placed</th>
+                        <th class="right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>
+                                <a class="cell-title" asp-area="Admin" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id">@order.OrderNumber</a>
+                                <div class="cell-sub">@order.PaymentMethod</div>
+                            </td>
+                            <td>
+                                <div class="cell-title">@order.CustomerName</div>
+                                <div class="cell-sub">@order.Phone</div>
+                            </td>
+                            <td class="num">@order.Items.Sum(i => i.Quantity)</td>
+                            <td class="num">@StoreSettings.Money(order.Total)</td>
+                            <td><partial name="_StatusPill" model="order.Status" /></td>
+                            <td class="cell-sub">@order.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="btn-admin light sm" asp-area="Admin" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id">View</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

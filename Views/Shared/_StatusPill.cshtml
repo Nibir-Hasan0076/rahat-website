@@ -1,0 +1,12 @@
+@model StyleNest.Models.OrderStatus
+@{
+    var css = Model switch
+    {
+        StyleNest.Models.OrderStatus.Pending => "status-pending",
+        StyleNest.Models.OrderStatus.Confirmed => "status-confirmed",
+        StyleNest.Models.OrderStatus.Shipped => "status-shipped",
+        StyleNest.Models.OrderStatus.Delivered => "status-delivered",
+        _ => "status-cancelled"
+    };
+}
+<span class="status-pill @css">@Model</span>

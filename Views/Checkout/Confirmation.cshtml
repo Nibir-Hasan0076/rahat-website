@@ -1,0 +1,117 @@
+@model StyleNest.Models.Order
+@{
+    ViewData["Title"] = "Order confirmed";
+    var justPlaced = ViewData["JustPlaced"] as bool? == true;
+}
+
+<div class="container confirmation-wrap">
+    <div class="success-mark">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m4.5 12.5 5 5L20 7"></path>
+        </svg>
+    </div>
+
+    @if (justPlaced)
+    {
+        <span class="eyebrow text-success">Order placed</span>
+    }
+    <h1>Thank you, @Model.CustomerName.Split(' ').First().</h1>
+    <p class="text-muted-custom" style="max-width:560px;">
+        Your order is in. We'll confirm it by phone or email shortly and get it packed for delivery.
+    </p>
+
+    <div class="d-flex align-items-center gap-2 mt-3 flex-wrap">
+        <span class="order-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M4 7h16v13H4zM8 4v5M16 4v5"></path>
+            </svg>
+            @Model.OrderNumber
+        </span>
+        <partial name="_StatusPill" model="Model.Status" />
+    </div>
+
+    <div class="confirmation-grid">
+        <div class="confirm-card">
+            <h2>Order items</h2>
+            @foreach (var item in Model.Items)
+            {
+                <div class="confirm-item">
+                    <img src="@(item.ImageUrl ?? "/images/placeholder-product.svg")" alt="@item.ProductName" />
+                    <div>
+                        <div class="ci-name">@item.ProductName</div>
+                        <div class="ci-meta">Qty @item.Quantity · @StoreSettings.Money(item.UnitPrice) each</div>
+                    </div>
+                    <div class="ci-total">@StoreSettings.Money(item.LineTotal)</div>
+                </div>
+            }
+
+            <div class="summary-row mt-3">
+                <span>Subtotal</span>
+                <strong>@StoreSettings.Money(Model.Subtotal)</strong>
+            </div>
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong>@(Model.ShippingFee == 0 ? "Free" : StoreSettings.Money(Model.ShippingFee))</strong>
+            </div>
+            <div class="summary-total">
+                <span>Total</span>
+                <span class="price">@StoreSettings.Money(Model.Total)</span>
+            </div>
+        </div>
+
+        <div class="confirm-card">
+            <h2>Delivery details</h2>
+            <div class="detail-list">
+                <div class="row-item">
+                    <span class="label">Name</span>
+                    <span class="value">@Model.CustomerName</span>
+                </div>
+                <div class="row-item">
+                    <span class="label">Phone</span>
+                    <span class="value">@Model.Phone</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                {
+                    <div class="row-item">
+                        <span class="label">Email</span>
+                        <span class="value">@Model.Email</span>
+                    </div>
+                }
+                <div class="row-item">
+                    <span class="label">Address</span>
+                    <span class="value">@Model.Address@(string.IsNullOrWhiteSpace(Model.Area) ? "" : $", {Model.Area}"), @Model.City</span>
+                </div>
+                <div class="row-item">
+                    <span class="label">Payment</span>
+                    <span class="value">@Model.PaymentMethod</span>
+                </div>
+                <div class="row-item">
+                    <span class="label">Placed</span>
+                    <span class="value">@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <div class="row-item">
+                        <span class="label">Notes</span>
+                        <span class="value">@Model.Notes</span>
+                    </div>
+                }
+            </div>
+
+            <div class="alert-soft mt-3">
+                Keep your order number handy — it's all we need to look up your order.
+            </div>
+        </div>
+    </div>
+
+    <div class="confirm-actions">
+        <a class="btn-ink" asp-area="" asp-controller="Shop" asp-action="Index">Continue shopping</a>
+        <button type="button" class="btn-outline-ink" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"></path>
+                <path d="M6 14h12v7H6z"></path>
+            </svg>
+            Print receipt
+        </button>
+    </div>
+</div>

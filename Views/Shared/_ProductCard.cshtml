@@ -1,0 +1,43 @@
+@model StyleNest.Models.Product
+@{
+    var image = Model.ImageUrl ?? "/images/placeholder-product.svg";
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<article class="product-card">
+    <div class="product-media">
+        <a asp-area="" asp-controller="Shop" asp-action="Details" asp-route-id="@Model.Id" aria-label="@Model.Name">
+            <img src="@image" alt="@Model.Name" loading="lazy" />
+        </a>
+        @if (Model.Stock <= 0)
+        {
+            <span class="product-tag sold-out">Sold out</span>
+        }
+        else if (Model.IsFeatured)
+        {
+            <span class="product-tag">Featured</span>
+        }
+        <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" class="quick-add">
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <input type="hidden" name="quantity" value="1" />
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+            <button type="submit" class="icon-btn" title="Add to bag" aria-label="Add @Model.Name to bag" disabled="@(Model.Stock <= 0)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 8.5h12l1 12H5l1-12Z"></path>
+                    <path d="M9 8.5V6a3 3 0 0 1 6 0v2.5"></path>
+                    <path d="M12 12v5M9.5 14.5h5"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
+    <div class="product-info">
+        <a class="product-cat" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-category="@Model.CategoryId">@Model.Category?.Name</a>
+        <a class="product-name" asp-area="" asp-controller="Shop" asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a>
+        <div class="product-bottom">
+            <span class="price">@StoreSettings.Money(Model.Price)</span>
+            @if (Model.Stock > 0 && Model.Stock <= 5)
+            {
+                <small class="text-muted-custom" style="font-size:.7rem;">Only @Model.Stock left</small>
+            }
+        </div>
+    </div>
+</article>

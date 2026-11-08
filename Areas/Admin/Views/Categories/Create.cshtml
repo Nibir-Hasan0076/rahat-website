@@ -1,0 +1,21 @@
+@model StyleNest.Models.ViewModels.CategoryFormViewModel
+@{
+    ViewData["Title"] = "Add category";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">
+            <a asp-area="Admin" asp-controller="Categories" asp-action="Index">Categories</a>
+            <span>/</span><span>New</span>
+        </div>
+        <h1>Add category</h1>
+        <p>Create a new collection for your products.</p>
+    </div>
+</div>
+
+<partial name="_Form" model="Model" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

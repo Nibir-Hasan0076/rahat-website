@@ -1,0 +1,159 @@
+﻿@inject StyleNest.Services.CartService Cart
+@{
+    var controller = ViewContext.RouteData.Values["controller"] as string;
+    var cartCount = Cart.TotalQuantity;
+    var successMessage = TempData["Success"] as string;
+    var errorMessage = TempData["Error"] as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="StyleNest — thoughtfully made panjabis, polos, shirts and pants." />
+    <title>@ViewData["Title"] · StyleNest</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header class="site-header">
+    <div class="topbar">
+        Free delivery on orders over <strong>৳2,000</strong> · Cash on delivery available nationwide
+    </div>
+    <nav class="navbar navbar-expand-lg store-nav">
+        <div class="container">
+            <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Style<span>Nest</span></a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#storeNavbar"
+                    aria-controls="storeNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="storeNavbar">
+                <ul class="navbar-nav align-items-lg-center me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link @(controller == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(controller == "Shop" ? "active" : "")" asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu">
+                            <vc:category-nav />
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <form class="nav-search" method="get" asp-area="" asp-controller="Shop" asp-action="Index" role="search">
+                        <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Search panjabi, polos…" aria-label="Search products" />
+                        <button type="submit" aria-label="Search">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <path d="m20 20-3.6-3.6"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <a class="cart-link" asp-area="" asp-controller="Cart" asp-action="Index">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 8.5h12l1 12H5l1-12Z"></path>
+                            <path d="M9 8.5V6a3 3 0 0 1 6 0v2.5"></path>
+                        </svg>
+                        <span>Bag</span>
+                        @if (cartCount > 0)
+                        {
+                            <span class="cart-badge" data-bag-count>@cartCount</span>
+                        }
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+@if (successMessage is not null || errorMessage is not null)
+{
+    <div class="flash-stack">
+        @if (successMessage is not null)
+        {
+            <div class="flash success" data-autohide>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m5 12 5 5L20 7"></path>
+                </svg>
+                <div>@successMessage</div>
+                <button type="button" aria-label="Dismiss">&times;</button>
+            </div>
+        }
+        @if (errorMessage is not null)
+        {
+            <div class="flash error">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 8v5M12 16.5v.5"></path>
+                </svg>
+                <div>@errorMessage</div>
+                <button type="button" aria-label="Dismiss">&times;</button>
+            </div>
+        }
+    </div>
+}
+
+<main role="main">
+    @RenderBody()
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">Style<span>Nest</span></div>
+                <p class="footer-about">
+                    Everyday clothing with considered details. Panjabis, polos, shirts and pants
+                    designed for comfort and made to last.
+                </p>
+            </div>
+            <div>
+                <h5>Shop</h5>
+                <ul class="footer-links">
+                    <li><a asp-area="" asp-controller="Shop" asp-action="Index">All products</a></li>
+                    <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-q="Panjabi">Panjabi</a></li>
+                    <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-q="Polo">Polo shirts</a></li>
+                    <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-q="Shirt">Full shirts</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Help</h5>
+                <ul class="footer-links">
+                    <li><a asp-area="" asp-controller="Cart" asp-action="Index">Your bag</a></li>
+                    <li><a asp-area="" asp-controller="Checkout" asp-action="Index">Checkout</a></li>
+                    <li><a href="tel:+8801700000000">Call 01700 000000</a></li>
+                    <li><a href="mailto:hello@stylenest.test">hello@stylenest.test</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Good to know</h5>
+                <ul class="footer-links">
+                    <li>Free delivery over ৳2,000</li>
+                    <li>Cash on delivery available</li>
+                    <li>7-day easy exchange</li>
+                    <li>Saturday – Thursday, 10am – 8pm</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 StyleNest. All rights reserved.</span>
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Store admin</a>
+        </div>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

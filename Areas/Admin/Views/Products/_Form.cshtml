@@ -1,0 +1,126 @@
+@model StyleNest.Models.ViewModels.ProductFormViewModel
+@{
+    var isEdit = Model.Id != 0;
+}
+
+<form method="post" enctype="multipart/form-data" asp-area="Admin" asp-controller="Products" asp-action="@(isEdit ? "Edit" : "Create")">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ExistingImageUrl" />
+
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+    <div class="form-grid">
+        <div>
+            <div class="form-card">
+                <h2>Product details</h2>
+                <div class="mb-3">
+                    <label class="admin-label" asp-for="Name">Product name <span class="req">*</span></label>
+                    <input class="form-control" asp-for="Name" placeholder="e.g. Heritage Cotton Panjabi" autofocus />
+                    <span asp-validation-for="Name"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="admin-label" asp-for="CategoryId">Category <span class="req">*</span></label>
+                    <select class="form-select" asp-for="CategoryId">
+                        <option value="">Choose a category…</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId"></span>
+                    @if (Model.Categories.Count == 0)
+                    {
+                        <div class="form-hint">
+                            You need at least one category first.
+                            <a asp-area="Admin" asp-controller="Categories" asp-action="Create" style="color:var(--accent);font-weight:600;">Create a category →</a>
+                        </div>
+                    }
+                </div>
+                <div>
+                    <label class="admin-label" asp-for="Description">Description</label>
+                    <textarea class="form-control" asp-for="Description" placeholder="Fabric, fit and styling details…" style="min-height:150px;"></textarea>
+                    <span asp-validation-for="Description"></span>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2>Pricing &amp; availability</h2>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="admin-label" asp-for="Price">Price (৳) <span class="req">*</span></label>
+                        <input class="form-control" asp-for="Price" type="number" min="1" step="0.01" placeholder="0.00" />
+                        <span asp-validation-for="Price"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="admin-label" asp-for="Stock">Stock quantity <span class="req">*</span></label>
+                        <input class="form-control" asp-for="Stock" type="number" min="0" step="1" placeholder="0" />
+                        <span asp-validation-for="Stock"></span>
+                    </div>
+                </div>
+
+                <label class="form-check-custom mt-3">
+                    <input asp-for="IsActive" />
+                    <span>
+                        <strong>Visible in store</strong>
+                        <span>Hidden products won't appear in the storefront or search.</span>
+                    </span>
+                </label>
+
+                <label class="form-check-custom">
+                    <input asp-for="IsFeatured" />
+                    <span>
+                        <strong>Feature this product</strong>
+                        <span>Featured pieces are highlighted on the home page.</span>
+                    </span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-admin primary">@(isEdit ? "Save changes" : "Add product")</button>
+                <a class="btn-admin light" asp-area="Admin" asp-controller="Products" asp-action="Index">Cancel</a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>Product images</h2>
+            <div class="image-uploader">
+                <img id="productPreview" class="image-preview"
+                     src="@(Model.ExistingImageUrl ?? "/images/placeholder-product.svg")" alt="Product image preview" />
+                <input class="form-control" asp-for="ImageFiles" type="file" multiple
+                       accept="image/png,image/jpeg,image/webp,image/gif" data-preview="#productPreview" />
+                <div class="form-hint">
+                    JPG, PNG, WEBP or GIF · up to 5 MB each. Choose several files at once —
+                    the first image becomes the cover when a product has none.
+                </div>
+                <span asp-validation-for="ImageFiles"></span>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (isEdit && Model.ExistingImages.Count > 0)
+{
+    <div class="form-card gallery-card">
+        <h2>More images</h2>
+        <p class="form-hint mb-3">These appear as thumbnails on the product page. Pick one to move it to the cover.</p>
+        <div class="admin-gallery">
+            @foreach (var image in Model.ExistingImages)
+            {
+                <div class="admin-gallery-item">
+                    <img src="@image.Url" alt="Product image" />
+                    <div class="admin-gallery-actions">
+                        <form method="post" asp-area="Admin" asp-controller="Products" asp-action="SetCover" asp-route-id="@Model.Id">
+                            <input type="hidden" name="imageId" value="@image.Id" />
+                            <button type="submit" class="image-action">Make cover</button>
+                        </form>
+                        <form method="post" asp-area="Admin" asp-controller="Products" asp-action="RemoveImage" asp-route-id="@Model.Id"
+                              data-confirm="Remove this image?">
+                            <input type="hidden" name="imageId" value="@image.Id" />
+                            <button type="submit" class="image-action danger">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,93 @@
+@model List<StyleNest.Models.ViewModels.CategoryListRow>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="admin-topbar">
+    <div>
+        <div class="admin-crumb">Catalogue</div>
+        <h1>Categories</h1>
+        <p>Group your products into collections shoppers can browse.</p>
+    </div>
+    <div class="admin-topbar-actions">
+        <a class="btn-admin primary" asp-area="Admin" asp-controller="Categories" asp-action="Create">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            Add category
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head">
+        <h2 class="panel-title">All categories (@Model.Count)</h2>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-admin">
+            <strong>No categories yet</strong>
+            Create your first category — like Panjabi or Polo Shirts — to start adding products.
+            <div class="mt-3">
+                <a class="btn-admin primary" asp-area="Admin" asp-controller="Categories" asp-action="Create">Create a category</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Products</th>
+                        <th>Created</th>
+                        <th class="right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="cell-product">
+                                    <img class="thumb-sm" src="@(row.Category.ImageUrl ?? "/images/placeholder-category.svg")" alt="@row.Category.Name" />
+                                    <div>
+                                        <div class="cell-title">@row.Category.Name</div>
+                                        <div class="cell-sub">@(string.IsNullOrWhiteSpace(row.Category.Description) ? "No description" : "Collection")</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="max-width:280px;">
+                                <span class="cell-sub">
+                                    @(string.IsNullOrWhiteSpace(row.Category.Description) ? "—" : (row.Category.Description.Length > 90 ? row.Category.Description[..90] + "…" : row.Category.Description))
+                                </span>
+                            </td>
+                            <td><span class="badge-soft gray">@row.ProductCount products</span></td>
+                            <td class="cell-sub">@row.Category.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="icon-action" title="Edit category" asp-area="Admin" asp-controller="Categories" asp-action="Edit" asp-route-id="@row.Category.Id">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 20h4L20 8l-4-4L4 16v4Z"></path><path d="m14 6 4 4"></path>
+                                        </svg>
+                                    </a>
+                                    <form method="post" asp-area="Admin" asp-controller="Categories" asp-action="Delete" asp-route-id="@row.Category.Id"
+                                          data-confirm="Delete the &quot;@row.Category.Name&quot; category? This cannot be undone.">
+                                        <button type="submit" class="icon-action danger" title="Delete category">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+                                                <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
